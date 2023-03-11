@@ -9,6 +9,7 @@
 
 const Mock = require('mockjs');
 import {data} from './userSource.js';
+import { behaviorData } from "./userBehavior.js";
 
 /**
  * @name getParams
@@ -55,7 +56,19 @@ Mock.mock(/checkUserInfo/, 'get', (param) => {
     }
 })
 
+/**
+ * 获取用户来源数据
+ */
 Mock.mock(/getUserSourceChart/, 'get', param => {
     console.log('getUserSourceChart',param)
     return data
 })
+
+/**
+ * 获取用户行为数据
+ */
+Mock.mock(/getUserbehaviorChart/, 'get', param => {
+    console.log('getUserSourceChart',param)
+    return behaviorData
+})
+

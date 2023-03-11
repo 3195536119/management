@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: shaye
+ * @Date: 2023-03-08 18:54:45
+ * @LastEditors: shaye
+ * @LastEditTime: 2023-03-11 21:06:56
+ */
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -8,7 +16,7 @@ const routes = [
     children: [{
       path: 'index',
       name: 'Index',
-      component: () => import('../views/index.vue')
+      component: () => import('../views/index/index.vue')
     }, {
       path: 'table',
       name: 'Table',
@@ -22,7 +30,7 @@ const routes = [
       name: 'Editor',
       component: () => import('../views/editor.vue')
     }]
-  },{
+  }, {
     path: '/login',
     name: 'Login',
     component: () => import('../components/login.vue'),

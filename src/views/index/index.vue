@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:32
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-11 12:34:27
+ * @LastEditTime: 2023-03-11 21:27:15
 -->
 <template>
     <div class="router_content">
@@ -13,13 +13,15 @@
             <el-rate v-model="value" disabled show-text :texts="texts" />
         </el-card>
         <div class="charts">
-            <UserSource width="50%"/>
+            <UserSource class="userChart"/>
+            <UserBehavior class="userChart"/>
         </div>
     </div>
 </template>
 
 <script>
 import UserSource from './userSource.vue'
+import UserBehavior from './userBehavior.vue'
 export default {
     name: 'Index',
 
@@ -31,7 +33,8 @@ export default {
     },
     
     components:{
-        UserSource
+        UserSource,
+        UserBehavior
     },
 
     mounted() {
@@ -47,6 +50,8 @@ export default {
 <style  scoped>
 .router_content{
     width: 100%;
+    background-color: rgb(242,242,242);
+    padding: 15px 20px 0 20px;
 }
 
 .el-card {
@@ -56,5 +61,15 @@ export default {
 .charts{
     display: flex;
     justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    margin-top: 5px;
 }
+
+.userChart{
+    width: 48%;
+    height: 100%;
+}
+
+
 </style>

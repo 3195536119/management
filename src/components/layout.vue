@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:08:20
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-11 11:39:35
+ * @LastEditTime: 2023-03-11 20:26:24
 -->
 <template>
     <div>
@@ -50,6 +50,7 @@ export default {
 <style  scoped>
     .content{
         display: flex;
+        height: calc(100vh - 150px);
     }
 
     .menu{

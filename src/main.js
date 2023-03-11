@@ -23,7 +23,7 @@ app.use(router)
 app.use(ElementPlus)
 
 app.config.globalProperties.$http = axios
-app.config.globalProperties.$echarts=echarts
+app.config.globalProperties.$echarts = echarts
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
