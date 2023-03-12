@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 18:54:45
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-11 21:06:56
+ * @LastEditTime: 2023-03-12 19:02:56
  */
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -26,9 +26,9 @@ const routes = [
       name: 'Form',
       component: () => import('../views/form.vue')
     }, {
-      path: 'editor',
-      name: 'Editor',
-      component: () => import('../views/editor.vue')
+      path: 'edit',
+      name: 'Edit',
+      component: () => import('../views/edit.vue')
     }]
   }, {
     path: '/login',

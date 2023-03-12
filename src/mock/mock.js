@@ -4,12 +4,14 @@
  * @Author: shaye
  * @Date: 2023-03-10 15:17:38
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-11 13:25:35
+ * @LastEditTime: 2023-03-12 17:20:20
  */
 
 const Mock = require('mockjs');
-import {data} from './userSource.js';
+import { data } from './userSource.js';
 import { behaviorData } from "./userBehavior.js";
+import { newZone } from "./newZone";
+import { tableData } from "./getTableData.js";
 
 /**
  * @name getParams
@@ -60,7 +62,7 @@ Mock.mock(/checkUserInfo/, 'get', (param) => {
  * 获取用户来源数据
  */
 Mock.mock(/getUserSourceChart/, 'get', param => {
-    console.log('getUserSourceChart',param)
+    console.log('getUserSourceChart', param)
     return data
 })
 
@@ -68,7 +70,33 @@ Mock.mock(/getUserSourceChart/, 'get', param => {
  * 获取用户行为数据
  */
 Mock.mock(/getUserbehaviorChart/, 'get', param => {
-    console.log('getUserSourceChart',param)
+    console.log('getUserSourceChart', param)
     return behaviorData
 })
+
+/**
+ * 获取下拉框的地域数据
+ */
+Mock.mock(/getZone/, 'get', param => {
+    return newZone
+})
+
+/**
+ * 模拟生成的表格数据，但是由于需要做删改查的操作，仅用于第一次生成数据。
+ */
+// Mock.mock('/api/getTable', {
+//     "datas|40-60": [
+//       {
+//         "id":Mock.Random.guid(),
+//         "date": '@date("yyyy-MM-dd")',
+//         "name": "@cname",
+//         "address": "@county(true)"
+//       }
+//     ]
+//   });
+
+Mock.mock('/api/getTable', 'get', param => {
+    return tableData
+});
+
 

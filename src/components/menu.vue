@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:09
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-11 21:29:27
+ * @LastEditTime: 2023-03-12 19:04:05
 -->
 <template>
     <el-menu  :router="true">
@@ -20,7 +20,7 @@
             <el-icon><Histogram /></el-icon>
             <span>form</span>
         </el-menu-item>
-        <el-menu-item index="editor">
+        <el-menu-item index="edit">
             <el-icon><Edit /></el-icon>
             <span>editor</span>
         </el-menu-item>
