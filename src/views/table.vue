@@ -1,53 +1,76 @@
 <!--
- * @Descripttion: 系统中的表格数据
+ * @Descripttion: 
  * @version: 
  * @Author: shaye
  * @Date: 2023-03-08 19:12:47
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-12 16:59:00
+ * @LastEditTime: 2023-03-13 20:39:38
+-->
 -->
 <template>
-    <div class="table_info">
-        <el-form :inline="true">
-            <el-form-item label="姓名:">
-                <el-input v-model="name"></el-input>
+<div class="table_info">
+    <el-form :inline="true">
+        <el-form-item label="姓名:">
+            <el-input v-model="name"></el-input>
+        </el-form-item>
+        <el-form-item label="年份:">
+            <el-date-picker v-model="year" type="year" placeholder="请选择" value-format="YYYY">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item label="地址:">
+            <el-cascader placeholder="请选择" v-model="address" :options="options" filterable />
+        </el-form-item>
+        <el-form-item>
+            <el-button @click="search" type="primary">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+            <el-button @click="exportData" type="primary">导出数据</el-button>
+        </el-form-item>
+    </el-form>
+
+    <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" style="width: 100%">
+        <el-table-column type="selection" width="55" />
+        <el-table-column label="序号" type="index" width="55" />
+        <el-table-column label="姓名" property="name">
+        </el-table-column>
+        <el-table-column property="date" label="出生日期" width="120" sortable />
+        <el-table-column property="address" label="地址" show-overflow-tooltip />
+        <el-table-column label="操作">
+            <template #default="scope">
+                <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-pagination align='center' background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[1, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="tableData.length">
+    </el-pagination>
+
+    <el-dialog v-model="dialogFormVisible" title="编辑用户信息">
+        <el-form :model="editForm" label-position="right" label-width="120px">
+            <el-form-item label="id" v-show="false">
+                <el-input v-model="editForm.ID" />
             </el-form-item>
-            <el-form-item label="年份:">
-                <el-date-picker v-model="year" type="year" placeholder="请选择">
-                </el-date-picker>
+            <el-form-item label="姓名：">
+                <el-input v-model="editForm.editName" />
+            </el-form-item>
+            <el-form-item label="出生日期：">
+                <el-date-picker v-model="editForm.editDate" type="date" value-format="YYYY-MM-DD" />
             </el-form-item>
             <el-form-item label="地址:">
-                <el-cascader placeholder="请选择" v-model="address" :options="options" filterable />
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="search" type="primary">查询</el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button @click="exportData" type="primary">导出数据</el-button>
+                <el-cascader placeholder="请选择" v-model="editForm.editAddress" :options="options" filterable />
             </el-form-item>
         </el-form>
-
-        <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" style="width: 100%">
-            <el-table-column type="selection" width="55" />
-            <el-table-column label="序号" type="index" width="55" />
-            <el-table-column label="姓名" property="name">
-            </el-table-column>
-            <el-table-column property="date" label="出生日期" width="120" sortable />
-            <el-table-column property="address" label="地址" show-overflow-tooltip />
-            <el-table-column label="操作">
-                <template #default="scope">
-                    <el-button size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <el-pagination align='center' background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-            :current-page="currentPage" :page-sizes="[1, 5, 10, 20]" :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper" :total="tableData.length">
-        </el-pagination>
-
-    </div>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取消</el-button>
+                <el-button type="primary" @click="editSure">
+                    确定
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
+</div>
 </template>
 
 <script>
@@ -59,11 +82,18 @@ export default {
             name: '',
             year: '',
             address: '',
+            dialogFormVisible: false,
             options: [],
             tableData: [],
-            currentPage: 1,//当前页码
-            pageSize: 5,//每页的数据条数
-            total: 20//总条数
+            currentPage: 1, //当前页码
+            pageSize: 5, //每页的数据条数
+            total: 20, //总条数
+            editForm: {
+                ID: '',
+                editName: '',
+                editDate: '',
+                editAddress: []
+            }
         };
     },
 
@@ -77,7 +107,7 @@ export default {
 
     methods: {
         getTables() {
-            this.$http.get('/api/getTable').then(res => {
+            this.$http.get('/getTable',).then(res => {
                 console.log(res.data)
                 this.tableData = res.data
             })
@@ -86,7 +116,8 @@ export default {
             let name = this.name
             let year = this.year
             let address = this.address
-
+            console.log(name, year, address)
+            // this.getTables(name,year,address)
         },
         exportData() {
 
@@ -101,10 +132,27 @@ export default {
             this.currentPage = val;
         },
         handleEdit(index, row) {
-            console.log(index, row)
+            this.dialogFormVisible = true
+            this.editForm = {
+                ID: row.id,
+                editName: row.name,
+                editDate: row.date,
+                editAddress: row.address
+            }
         },
         handleDelete(index, row) {
 
+        },
+        editSure() {
+            this.$http.get('/editTableData', {
+                params: {
+                    id: this.editForm.ID,
+                    name: this.editForm.editName,
+                    date: this.editForm.editDate,
+                    address: this.editForm.editAddress
+                }
+            })
+            this.getTables()
         }
     },
 };

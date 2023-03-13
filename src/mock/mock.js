@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-10 15:17:38
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-12 17:20:20
+ * @LastEditTime: 2023-03-13 20:44:34
  */
 
 const Mock = require('mockjs');
@@ -21,11 +21,13 @@ import { tableData } from "./getTableData.js";
  */
 function getParams(url) {
     let paramObj = {};
-    let arr = url.slice(url.indexOf('?') + 1).split('&');
-    arr.forEach(item => {
-        let keyValueArr = item.split('=');
-        paramObj[keyValueArr[0]] = keyValueArr[1]
-    })
+    if (url.indexOf('?') != -1) {
+        let arr = url.slice(url.indexOf('?') + 1).split('&');
+        arr.forEach(item => {
+            let keyValueArr = item.split('=');
+            paramObj[keyValueArr[0]] = keyValueArr[1]
+        })
+    }
     return paramObj
 }
 
@@ -95,8 +97,43 @@ Mock.mock(/getZone/, 'get', param => {
 //     ]
 //   });
 
-Mock.mock('/api/getTable', 'get', param => {
+Mock.mock(/getTable/, 'get', param => {
+    console.log(param)
+    let url = param.url;
+    let paramsObj = getParams(url)
+    let paramArr = Object.keys(paramsObj)
+    if (paramArr.length == 0) {
+        return tableData
+    }
+    let name = paramsObj.name
+    let year = paramsObj.year
+    let address = paramsObj.address
+    console.log(name, year, address)
+    // return tableData.filter(value=>{
+
+    // })
     return tableData
+});
+
+Mock.mock(/editTableData/, 'get', param => {
+    console.log(param)
+    let url = param.url;
+    let paramsObj = getParams(url)
+    let id = paramsObj.id
+    let name = paramsObj.name
+    let date = paramsObj.date
+    let address = paramsObj.address
+    console.log(id, name, date, address)
+    tableData.some(data => {
+        if (data.id == id) {
+            data.name = name
+                data.date = date
+            data.address = address
+            console.log(data)
+        }
+
+    })
+    console.log(tableData)
 });
 
 
