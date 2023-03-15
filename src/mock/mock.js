@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-10 15:17:38
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-13 20:44:34
+ * @LastEditTime: 2023-03-15 21:17:38
  */
 
 const Mock = require('mockjs');
@@ -97,13 +97,40 @@ Mock.mock(/getZone/, 'get', param => {
 //     ]
 //   });
 
+/**
+ * 此处模拟数据库查询，数据库中存放的都是一个值，之后用维表进行关联，此处模拟维表关联操作
+ * @param {*} data 待处理的数据
+ * @returns []返回处理后的数据
+ */
+function getTableDataWithChinese(data) {
+    let tableDataReturn = []
+    data.forEach(data => {
+        let addressData = data.address
+        let dataNew = data
+        newZone.some(zone => {
+            if (zone.value == addressData.slice(0, 3)) {
+                console.log(zone)
+                let children = zone.children
+                children.some(child => {
+                    if (child.value == addressData) {
+                        dataNew.address = zone.label + child.label
+                        dataNew.addressCode = addressData
+                    }
+                })
+            }
+        })
+        tableDataReturn.push(dataNew)
+    })
+    return tableDataReturn
+}
+
 Mock.mock(/getTable/, 'get', param => {
     console.log(param)
     let url = param.url;
     let paramsObj = getParams(url)
     let paramArr = Object.keys(paramsObj)
     if (paramArr.length == 0) {
-        return tableData
+        return getTableDataWithChinese(tableData)
     }
     let name = paramsObj.name
     let year = paramsObj.year
@@ -112,13 +139,14 @@ Mock.mock(/getTable/, 'get', param => {
     // return tableData.filter(value=>{
 
     // })
-    return tableData
+
 });
 
 Mock.mock(/editTableData/, 'get', param => {
     console.log(param)
     let url = param.url;
     let paramsObj = getParams(url)
+    console.log(paramsObj)
     let id = paramsObj.id
     let name = paramsObj.name
     let date = paramsObj.date
@@ -127,7 +155,7 @@ Mock.mock(/editTableData/, 'get', param => {
     tableData.some(data => {
         if (data.id == id) {
             data.name = name
-                data.date = date
+            data.date = date
             data.address = address
             console.log(data)
         }

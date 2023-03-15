@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:47
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-14 20:34:53
+ * @LastEditTime: 2023-03-15 21:19:31
 -->
 -->
 <template>
@@ -125,7 +125,7 @@ export default {
             let year = this.year
             let address = this.address
             console.log(name, year, address)
-            this.getTables(name, year, address)
+            // this.getTables(name, year, address)
         },
         exportData() {
 
@@ -140,12 +140,14 @@ export default {
             this.currentPage = val;
         },
         handleEdit(index, row) {
+            console.log(row)
+            let addressArr = [row.addressCode.slice(0, 3), row.addressCode]
             this.dialogFormVisible = true
             this.editForm = {
                 ID: row.id,
                 editName: row.name,
                 editDate: row.date,
-                editAddress: row.address
+                editAddress: addressArr
             }
         },
         handleDelete(index, row) {
