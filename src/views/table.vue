@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:47
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-16 10:54:33
+ * @LastEditTime: 2023-03-16 16:45:25
 -->
 <template>
     <div class="table_info">
@@ -27,7 +27,8 @@
             </el-form-item>
         </el-form>
 
-        <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" style="width: 100%">
+        <el-table :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" style="width: 100%"
+            id="exportTable">
             <el-table-column type="selection" width="55" />
             <el-table-column label="序号" type="index" width="55" />
             <el-table-column label="姓名" property="name">
@@ -76,6 +77,8 @@
 
 <script>
 import { ElMessageBox, ElMessage } from "element-plus";
+import { saveAs } from 'file-saver';
+import { utils, write } from "xlsx";
 export default {
     name: 'Table',
 
@@ -129,6 +132,31 @@ export default {
             this.getTables(name, year, address)
         },
         exportData() {
+            this.pageSize = this.tableData.length
+            let that = this
+            let size = this.pageSize
+            this.currentPage = 1
+            let tables = document.getElementById('exportTable')
+
+            this.$nextTick(function () {
+                let table_book = utils.table_to_book(tables)
+                let table_write = write(table_book, {
+                    bookType: 'xlsx',
+                    bookSST: true,
+                    type: 'array'
+                })
+                try {
+                    saveAs(new Blob([table_write], { type: 'application/octet-stream' }), 'sheet.xlsx')
+                } catch (e) {
+                    if (typeof conosle !== undefined)
+                        console.log(e, table_write)
+                }
+                return table_write
+            })
+            this.$nextTick(() => {
+                this.pageSize = size
+                this.currentPage = 1
+            })
 
         },
         //每页条数改变时触发 选择一页显示多少行
