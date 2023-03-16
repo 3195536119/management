@@ -4,8 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:47
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-15 21:19:31
--->
+ * @LastEditTime: 2023-03-16 10:08:59
 -->
 <template>
     <div class="table_info">
@@ -18,7 +17,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="地址:">
-                <el-cascader placeholder="请选择" v-model="address" :options="options" filterable />
+                <el-cascader placeholder="请选择" v-model="address" :options="options" filterable clearable/>
             </el-form-item>
             <el-form-item>
                 <el-button @click="search" type="primary">查询</el-button>
@@ -60,7 +59,7 @@
                     <el-date-picker v-model="editForm.editDate" type="date" value-format="YYYY-MM-DD" />
                 </el-form-item>
                 <el-form-item label="地址:">
-                    <el-cascader placeholder="请选择" v-model="editForm.editAddress" :options="options" filterable />
+                    <el-cascader placeholder="请选择" v-model="editForm.editAddress" :options="options" filterable clearable/>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -109,6 +108,7 @@ export default {
 
     methods: {
         getTables(name, year, address) {
+            console.log('------------------',address)
             this.$http.get('/getTable', {
                 params: {
                     name,
@@ -124,8 +124,9 @@ export default {
             let name = this.name
             let year = this.year
             let address = this.address
+            address = address ? address[1] : address
             console.log(name, year, address)
-            // this.getTables(name, year, address)
+            this.getTables(name, year, address)
         },
         exportData() {
 

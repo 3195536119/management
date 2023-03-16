@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-10 15:17:38
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-15 21:17:38
+ * @LastEditTime: 2023-03-16 10:11:32
  */
 
 const Mock = require('mockjs');
@@ -106,10 +106,9 @@ function getTableDataWithChinese(data) {
     let tableDataReturn = []
     data.forEach(data => {
         let addressData = data.address
-        let dataNew = data
+        let dataNew = { ...data }
         newZone.some(zone => {
             if (zone.value == addressData.slice(0, 3)) {
-                console.log(zone)
                 let children = zone.children
                 children.some(child => {
                     if (child.value == addressData) {
@@ -125,21 +124,22 @@ function getTableDataWithChinese(data) {
 }
 
 Mock.mock(/getTable/, 'get', param => {
-    console.log(param)
     let url = param.url;
     let paramsObj = getParams(url)
     let paramArr = Object.keys(paramsObj)
     if (paramArr.length == 0) {
         return getTableDataWithChinese(tableData)
     }
-    let name = paramsObj.name
-    let year = paramsObj.year
-    let address = paramsObj.address
-    console.log(name, year, address)
-    // return tableData.filter(value=>{
-
-    // })
-
+    let nameParam = paramsObj.name ? decodeURI(paramsObj.name) : paramsObj.name
+    let yearParam = paramsObj.year
+    let addressParam = paramsObj.address ? paramsObj.address : ''
+    let dataNew = tableData.filter(data => {
+        let nameCheck = (data.name.indexOf(nameParam) == -1) ? false : true
+        let yearCheck = (data.date.indexOf(yearParam) == -1) ? false : true
+        let addressCheck = (data.address.indexOf(addressParam) == -1) ? false : true
+        return nameCheck && yearCheck && addressCheck
+    })
+    return getTableDataWithChinese(dataNew)
 });
 
 Mock.mock(/editTableData/, 'get', param => {
@@ -159,9 +159,7 @@ Mock.mock(/editTableData/, 'get', param => {
             data.address = address
             console.log(data)
         }
-
     })
-    console.log(tableData)
 });
 
 
