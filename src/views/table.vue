@@ -4,7 +4,7 @@
  * @Author: shaye
  * @Date: 2023-03-08 19:12:47
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-16 10:08:59
+ * @LastEditTime: 2023-03-16 10:54:33
 -->
 <template>
     <div class="table_info">
@@ -17,7 +17,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="地址:">
-                <el-cascader placeholder="请选择" v-model="address" :options="options" filterable clearable/>
+                <el-cascader placeholder="请选择" v-model="address" :options="options" filterable clearable />
             </el-form-item>
             <el-form-item>
                 <el-button @click="search" type="primary">查询</el-button>
@@ -59,7 +59,7 @@
                     <el-date-picker v-model="editForm.editDate" type="date" value-format="YYYY-MM-DD" />
                 </el-form-item>
                 <el-form-item label="地址:">
-                    <el-cascader placeholder="请选择" v-model="editForm.editAddress" :options="options" filterable clearable/>
+                    <el-cascader placeholder="请选择" v-model="editForm.editAddress" :options="options" filterable clearable />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { ElMessageBox, ElMessage } from "element-plus";
 export default {
     name: 'Table',
 
@@ -108,7 +109,6 @@ export default {
 
     methods: {
         getTables(name, year, address) {
-            console.log('------------------',address)
             this.$http.get('/getTable', {
                 params: {
                     name,
@@ -152,7 +152,26 @@ export default {
             }
         },
         handleDelete(index, row) {
-
+            ElMessageBox.confirm(
+                '确认删除吗？',
+                '警告！', {
+                type: 'warning',
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }
+            ).then(() => {
+                this.$http.get('/deleteTableData', {
+                    params: {
+                        id: row.id
+                    }
+                }).then(() => {
+                    this.getTables()
+                    ElMessage({
+                        message: '删除成功！',
+                        type: 'success',
+                    })
+                })
+            })
         },
         editSure() {
             this.$http.get('/editTableData', {
@@ -160,10 +179,23 @@ export default {
                     id: this.editForm.ID,
                     name: this.editForm.editName,
                     date: this.editForm.editDate,
-                    address: this.editForm.editAddress
+                    address: this.editForm.editAddress[1]
                 }
+            }).then(res => {
+                ElMessageBox.confirm(
+                    '确认修改吗？',
+                    '警告！', {
+                    type: 'warning',
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消'
+                }
+                ).then(() => {
+                    this.dialogFormVisible = false
+                    this.getTables()
+                })
+
             })
-            this.getTables()
+
         }
     },
 };

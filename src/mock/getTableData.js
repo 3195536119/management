@@ -1,4 +1,12 @@
-export const tableData=[
+/*
+ * @Descripttion:生成一个用户数据，模拟数据库
+ * @version: 
+ * @Author: shaye
+ * @Date: 2023-03-10 15:17:38
+ * @LastEditors: shaye
+ * @LastEditTime: 2023-03-16 11:25:01
+ */
+let tableData = [
   {
     id: 'd2561a5a-ba8b-e03e-561c-bb6ff0f32310',
     date: '1990-06-15',
@@ -294,3 +302,8 @@ export const tableData=[
     address: '01513'
   }
 ]
+
+//由于import方式引入的数据不可修改，此处改为require引入
+module.exports = {
+  tableData
+}

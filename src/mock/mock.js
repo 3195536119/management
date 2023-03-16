@@ -4,14 +4,15 @@
  * @Author: shaye
  * @Date: 2023-03-10 15:17:38
  * @LastEditors: shaye
- * @LastEditTime: 2023-03-16 10:11:32
+ * @LastEditTime: 2023-03-16 11:22:59
  */
 
 const Mock = require('mockjs');
 import { data } from './userSource.js';
 import { behaviorData } from "./userBehavior.js";
 import { newZone } from "./newZone";
-import { tableData } from "./getTableData.js";
+// import { tableData } from "./getTableData.js";
+let { tableData } = require('./getTableData')
 
 /**
  * @name getParams
@@ -123,6 +124,9 @@ function getTableDataWithChinese(data) {
     return tableDataReturn
 }
 
+/**
+ * getTable接口，用于获取用户table页的数据
+ */
 Mock.mock(/getTable/, 'get', param => {
     let url = param.url;
     let paramsObj = getParams(url)
@@ -142,6 +146,9 @@ Mock.mock(/getTable/, 'get', param => {
     return getTableDataWithChinese(dataNew)
 });
 
+/**
+ * table页数据的修改
+ */
 Mock.mock(/editTableData/, 'get', param => {
     console.log(param)
     let url = param.url;
@@ -154,12 +161,28 @@ Mock.mock(/editTableData/, 'get', param => {
     console.log(id, name, date, address)
     tableData.some(data => {
         if (data.id == id) {
-            data.name = name
+            data.name = decodeURI(name)
             data.date = date
             data.address = address
             console.log(data)
         }
     })
+    console.log(tableData)
+});
+
+Mock.mock(/deleteTableData/, 'get', param => {
+    console.log(param)
+    let url = param.url;
+    let paramsObj = getParams(url)
+    console.log(paramsObj)
+    let id = paramsObj.id
+
+    let dataNew = tableData.filter(data => {
+        return data.id != id
+    })
+    tableData = dataNew
+    console.log(tableData)
+    return getTableDataWithChinese(tableData)
 });
 
 
